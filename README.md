@@ -11,7 +11,6 @@ Website bán Gaming Gear như chuột, bàn phím, tai nghe, mousepad và phụ 
 - Express.js
 - RESTful API
 - SQL Database
-- Axios
 - Git / GitHub
 - Postman
 
@@ -19,15 +18,14 @@ Website bán Gaming Gear như chuột, bàn phím, tai nghe, mousepad và phụ 
 
 ### User
 - Đăng ký / Đăng nhập
-- Xem và tìm kiếm sản phẩm
-- Lọc sản phẩm
+- Xem chi tiết sản phẩm
 - Giỏ hàng
 - Đặt hàng
 - Xem lịch sử đơn hàng
 
 ### Admin
 - Quản lý sản phẩm
-- Quản lý danh mục
+- Dashboard
 - Quản lý người dùng
 - Quản lý đơn hàng
 - Upload hình ảnh sản phẩm
