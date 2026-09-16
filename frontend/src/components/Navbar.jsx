@@ -11,6 +11,8 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const isAdmin = user?.role === 'admin';
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -18,11 +20,23 @@ const Navbar = () => {
           <i className="fas fa-shield-halved"></i> GearShop
         </Link>
         <div className="navbar-links">
-          <Link to="/" className="nav-link">Trang Chủ</Link>
-          <Link to="/products" className="nav-link">Sản Phẩm</Link>
+          {!isAdmin && (
+            <>
+              <Link to="/" className="nav-link">Trang Chủ</Link>
+              <Link to="/products" className="nav-link">Sản Phẩm</Link>
+            </>
+          )}
           {user ? (
             <>
-              <Link to="/cart" className="nav-link"><i className="fas fa-shopping-cart"></i> Giỏ Hàng</Link>
+              {!isAdmin && (
+                <>
+                  <Link to="/cart" className="nav-link"><i className="fas fa-shopping-cart"></i> Giỏ Hàng</Link>
+                  <Link to="/orders" className="nav-link"><i className="fas fa-box"></i> Đơn Hàng</Link>
+                </>
+              )}
+              {isAdmin ? (
+                <Link to="/admin" className="nav-link admin-nav-link"><i className="fas fa-cog"></i> Quản Trị</Link>
+              ) : null}
               <span className="nav-user">Xin chào, {user.username}</span>
               <button onClick={handleLogout} className="btn-logout">Đăng Xuất</button>
             </>

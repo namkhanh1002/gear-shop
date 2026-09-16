@@ -6,17 +6,39 @@ import { useAuth } from '../context/AuthContext';
 const Cart = () => {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [orderSuccess, setOrderSuccess] = useState(localStorage.getItem('orderSuccess') === 'true');
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
     if (!user) return;
+    setLoading(true);
+    if (orderSuccess) {
+      setLoading(false);
+      return;
+    }
     axios.get('/api/cart').then(res => {
       setItems(res.data);
       setTotal(res.data.reduce((sum, item) => sum + item.price * item.quantity, 0));
-    });
-  }, [user]);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [user, orderSuccess]);
+
+  useEffect(() => {
+    if (orderSuccess) {
+      const timer = setTimeout(() => {
+        localStorage.removeItem('orderSuccess');
+        setOrderSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [orderSuccess]);
 
   const updateQty = (product_id, quantity) => {
+    if (quantity < 1) {
+      removeItem(product_id);
+      return;
+    }
     axios.put(`/api/cart/${product_id}`, { quantity }).then(() => {
       axios.get('/api/cart').then(res => {
         setItems(res.data);
@@ -40,7 +62,13 @@ const Cart = () => {
       return;
     }
     axios.post('/api/orders', { items, total })
-      .then(() => alert('Đặt hàng thành công!'))
+      .then(async () => {
+        await axios.delete('/api/cart/clear');
+        localStorage.setItem('orderSuccess', 'true');
+        setOrderSuccess(true);
+        setItems([]);
+        setTotal(0);
+      })
       .catch(() => alert('Lỗi đặt hàng'));
   };
 
@@ -49,7 +77,14 @@ const Cart = () => {
   return (
     <div className="page">
       <h2 className="section-title">Giỏ Hàng</h2>
-      {items.length === 0 ? (
+      {orderSuccess && (
+        <div className="order-success">
+          <i className="fas fa-check-circle"></i> Đặt hàng thành công! Cảm ơn bạn!
+        </div>
+      )}
+      {loading ? (
+        <p className="no-products">Đang tải...</p>
+      ) : items.length === 0 ? (
         <p className="no-products">Giỏ hàng trống</p>
       ) : (
         <>

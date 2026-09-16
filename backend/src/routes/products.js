@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 const authMiddleware = require('../middleware/auth');
+const upload = require('../config/multer');
 
 router.get('/', async (req, res) => {
   try {
@@ -32,20 +33,23 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
-    const result = await Product.create(req.body);
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const result = await Product.create({ ...req.body, image_url: imageUrl });
     res.status(201).json({ message: 'Product created', id: result.insertId });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-router.put('/:id', authMiddleware, async (req, res) => {
+router.put('/:id', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
-    await Product.update(req.params.id, req.body);
+    const data = { ...req.body };
+    if (req.file) data.image_url = `/uploads/${req.file.filename}`;
+    await Product.update(req.params.id, data);
     res.json({ message: 'Product updated' });
   } catch (err) {
     res.status(500).json({ message: err.message });

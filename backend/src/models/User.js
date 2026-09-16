@@ -24,6 +24,16 @@ class User {
   static async comparePassword(candidatePassword, hashedPassword) {
     return bcrypt.compare(candidatePassword, hashedPassword);
   }
+
+  static async getAll() {
+    const [rows] = await pool.execute('SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC');
+    return rows;
+  }
+
+  static async updateRole(id, role) {
+    const [result] = await pool.execute('UPDATE users SET role = ? WHERE id = ?', [role, id]);
+    return result;
+  }
 }
 
 module.exports = User;
