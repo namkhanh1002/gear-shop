@@ -20,6 +20,14 @@ pool.getConnection()
   })
   .catch(err => {
     console.error('MySQL Connection Error:', err.message);
+    // Debug: hiện env đang đọc được gì (không hiện password)
+    console.error('DB config read:', JSON.stringify({
+      host: process.env.MYSQL_HOST || '(empty)',
+      port: process.env.MYSQL_PORT || '(empty)',
+      user: process.env.MYSQL_USER || '(empty)',
+      database: process.env.MYSQL_DATABASE || '(empty)',
+      ssl: process.env.MYSQL_SSL || '(empty)'
+    }));
   });
 
 app.get('/api', (req, res) => {
