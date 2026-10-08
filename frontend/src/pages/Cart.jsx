@@ -69,7 +69,7 @@ const Cart = () => {
         setItems([]);
         setTotal(0);
       })
-      .catch(() => alert('Lỗi đặt hàng'));
+      .catch((err) => alert(err.response?.data?.message || 'Lỗi đặt hàng'));
   };
 
   if (!user) return <div className="page"><p>Vui lòng đăng nhập để xem giỏ hàng</p></div>;

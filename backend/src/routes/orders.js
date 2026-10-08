@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth');
 
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    if (req.user.role === 'admin') return res.status(403).json({ message: 'Admin cannot place orders' });
+    if (req.user.role === 'admin') return res.status(403).json({ message: 'Tài khoản admin không thể đặt hàng' });
     const { items, total } = req.body;
     const result = await Order.create(req.user.id, items, total);
     res.status(201).json({ message: 'Order placed successfully', order: result });
