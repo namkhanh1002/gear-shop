@@ -209,7 +209,7 @@ const AdminPage = () => {
                 <tbody>
                   {products.map(p => (
                     <tr key={p.id}>
-                      <td><img src={p.image_url ? `http://localhost:5001${p.image_url}` : 'https://via.placeholder.com/50x50'} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} /></td>
+                      <td><img src={p.image_url || 'https://via.placeholder.com/50x50'} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} /></td>
                       <td>{p.name}</td>
                       <td>{p.category}</td>
                       <td>{(p.price || 0).toLocaleString()} VNĐ</td>

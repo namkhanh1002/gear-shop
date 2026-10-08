@@ -1,9 +1,13 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
+    // Vercel: filesystem read-only, chỉ ghi được /tmp (mất khi redeploy)
+    const dir = process.env.VERCEL ? '/tmp/uploads' : path.join(__dirname, '../../uploads');
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
