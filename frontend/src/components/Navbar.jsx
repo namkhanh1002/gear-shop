@@ -17,7 +17,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
-          <i className="fas fa-shield-halved"></i> GearShop
+          <img src="/favicon.svg" alt="GearShop" className="brand-logo" /> GearShop
         </Link>
         <div className="navbar-links">
           {!isAdmin && (
