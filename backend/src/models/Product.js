@@ -2,8 +2,11 @@ const pool = require('../config/db');
 
 class Product {
   static async getAll(filters = {}) {
-    const { category, search, page = 1, limit = 12 } = filters;
-    const offset = (page - 1) * limit;
+    const { category, search, page, limit } = filters;
+    // Ép thành số nguyên an toàn - TiDB không nhận placeholder ? trong LIMIT/OFFSET
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 12));
+    const offset = (pageNum - 1) * limitNum;
     let query = 'SELECT * FROM products WHERE 1=1';
     const params = [];
 
@@ -15,8 +18,7 @@ class Product {
       query += ' AND name LIKE ?';
       params.push(`%${search}%`);
     }
-    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
-    params.push(limit, offset);
+    query += ` ORDER BY created_at DESC LIMIT ${limitNum} OFFSET ${offset}`;
 
     const [rows] = await pool.execute(query, params);
     return rows;
